@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trivedi Man | Data Analyst Portfolio</title>
+    <!-- Load Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Lucide Icons for aesthetic icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Custom styles for smoother scrolling and dark mode background */
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #030712; /* gray-950 */
+        }
+        /* Custom scroll offset for fixed header */
+        .section-padding {
+            padding-top: 4rem; /* Adjust for fixed navbar height */
+            margin-top: -4rem; /* Pull content back up */
+        }
+    </style>
+</head>
+<body class="bg-gray-950 text-gray-100">
+
+    <!-- Container for the dynamic content -->
+    <div id="app-root"></div>
+
+    <script>
+        // --- PORTFOLIO DATA (Copied from React component) ---
+        const personalInfo = {
+            name: "Trivedi Man",
+            role: "Data Analyst & Business Intelligence Specialist",
+            tagline: "Bridging the gap between raw data and crucial business decisions through insightful reporting and analysis.",
+            bio: "I specialize in transforming complex datasets into clear, actionable visualizations and reports. My expertise spans data wrangling (SQL/Python), statistical analysis, and creating interactive dashboards that drive strategic and operational excellence.",
+            location: "Surat,Gujarat, India",
+            email: "mantrivedi448@gmail.com", 
+            resumeLink: "#", 
+            socials: {
+                github: "https://github.com/TrivediMan",
+                linkedin: "https://www.linkedin.com/in/man-trivedi-1bb663372?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
+            }
+        };
+
+        const coreSkills = [
+            { group: "Data Management", items: ["SQL (MySQL)"] },
+            { group: "Analysis & Tools", items: ["Python (Pandas, NumPy)", "Advanced Excel", "Statistical Testing", "Google Sheets"] },
+            { group: "Visualization & BI", items: ["Power BI"] }, ,
+        ];
+
+        const projects = [
+            {
+                title: "E-Commerce Funnel Optimization Dashboard",
+                description: "Built a Tableau dashboard tracking conversion rates across the user purchase journey, identifying a key drop-off point that led to a 10% increase in checkout completions.",
+                tags: ["Tableau", "SQL", "Funnel Analysis", "KPI Tracking"],
+                link: "#"
+            },
+            {
+                title: "Customer Segmentation & Lifetime Value (CLV)",
+                description: "Used Python and clustering algorithms (K-Means) to segment customer base, enabling the marketing team to deploy targeted campaigns that improved CLV by 18%.",
+                tags: ["Python (Pandas/Scipy)", "K-Means", "RFM Analysis", "CLV Modeling"],
+                link: "#"
+            },
+            {
+                title: "Sales Performance and Forecasting Report",
+                description: "Automated a monthly Power BI report integrating data from three different sources to provide real-time sales visibility and 6-month predictive forecasts.",
+                tags: ["Power BI", "Data Integration", "DAX", "Forecasting"],
+                link: "#"
+            }
+        ];
+
+        const experience = [
+            { year: "2023 - Present", role: "Business Intelligence Analyst", company: "Growth Metrics Inc.", focus: "Developed and maintained all company-wide operational and strategic dashboards." },
+            { year: "2020 - 2023", role: "Junior Data Analyst", company: "Retail Insights Group", focus: "Managed weekly sales reports and performed ad-hoc statistical analyses." },
+            { year: "2018 - 2020", role: "Data Entry Specialist", company: "Finance Corp", focus: "Oversaw data quality and migrated legacy data to a new SQL server." },
+        ];
+        
+        // --- UTILITIES ---
+
+        const navItems = ['About', 'Skills', 'Projects', 'Contact'];
+
+        /**
+         * Smoothly scrolls to a section, accounting for the fixed header.
+         * @param {string} id The ID of the section to scroll to.
+         */
+        function scrollToSection(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                const offset = 64; // Corresponds to h-16 navbar
+                const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+                const offsetPosition = elementPosition - offset;
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+            }
+        }
+
+        // --- COMPONENTS (HTML Template Generation) ---
+
+        function renderNavbar() {
+            const navHTML = `
+                <nav id="navbar" class="fixed top-0 w-full bg-gray-900/90 backdrop-blur-sm border-b border-gray-700 z-50">
+                    <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+                        <h1 class="text-2xl font-bold text-white tracking-wider">
+                            ${personalInfo.name.split(' ')[0]}<span class="text-cyan-400">.Data</span>
+                        </h1>
+                        
+                        <!-- Desktop Menu -->
+                        <div class="hidden md:flex items-center space-x-6">
+                            ${navItems.map(item => `
+                                <button 
+                                    onclick="scrollToSection('${item.toLowerCase()}')"
+                                    class="text-gray-300 hover:text-cyan-400 transition-colors font-medium"
+                                >
+                                    ${item}
+                                </button>
+                            `).join('')}
+                            <a 
+                                href="${personalInfo.resumeLink}" 
+                                class="px-4 py-2 bg-cyan-600 text-white rounded-full text-sm font-semibold hover:bg-cyan-700 transition-all"
+                                download
+                            >
+                                Download Resume
+                            </a>
+                        </div>
+
+                        <!-- Mobile Menu Button -->
+                        <button id="mobile-menu-button" class="md:hidden text-gray-300 hover:text-cyan-400">
+                            <i data-lucide="menu" class="w-7 h-7"></i>
+                        </button>
+                    </div>
+
+                    <!-- Mobile Menu Dropdown (Initially Hidden) -->
+                    <div id="mobile-menu-dropdown" class="md:hidden bg-gray-800 border-t border-gray-700 pb-2 hidden">
+                        ${navItems.map(item => `
+                            <button 
+                                onclick="scrollToSectionAndClose('${item.toLowerCase()}')"
+                                class="block w-full text-left px-6 py-2 text-gray-300 hover:bg-gray-700 hover:text-cyan-400 transition-colors"
+                            >
+                                ${item}
+                            </button>
+                        `).join('')}
+                        <a 
+                            href="${personalInfo.resumeLink}" 
+                            class="block w-full text-left px-6 py-2 mt-1 text-cyan-400 hover:bg-gray-700 transition-colors"
+                            download
+                        >
+                            <i data-lucide="download" class="inline mr-2 w-5 h-5"></i> Download Resume
+                        </a>
+                    </div>
+                </nav>
+            `;
+            document.getElementById('app-root').insertAdjacentHTML('afterbegin', navHTML);
+
+            // Add mobile menu toggle logic
+            const menuButton = document.getElementById('mobile-menu-button');
+            const menuDropdown = document.getElementById('mobile-menu-dropdown');
+            const menuIcon = menuButton.querySelector('i');
+
+            menuButton.addEventListener('click', () => {
+                const isOpen = menuDropdown.classList.toggle('hidden');
+                menuIcon.setAttribute('data-lucide', isOpen ? 'menu' : 'x');
+                // Re-render lucide icons after changing the attribute
+                lucide.createIcons(); 
+            });
+
+            // Function to scroll and close mobile menu
+            window.scrollToSectionAndClose = (id) => {
+                scrollToSection(id);
+                menuDropdown.classList.add('hidden');
+                menuIcon.setAttribute('data-lucide', 'menu');
+                lucide.createIcons(); 
+            };
+        }
+
+        function renderHero() {
+            return `
+                <div class="pt-32 pb-20 bg-gray-950 min-h-screen flex items-center justify-center text-center">
+                    <div class="max-w-4xl mx-auto px-6">
+                        <div class="inline-block px-4 py-1 mb-6 text-sm font-medium text-cyan-400 border border-cyan-700 rounded-full bg-cyan-900/20">
+                            Data Analyst Focused on Impact
+                        </div>
+                        <h1 class="text-6xl md:text-7xl font-extrabold text-white mb-4 leading-tight">
+                            I am <span class="text-cyan-400">${personalInfo.name}</span>
+                        </h1>
+                        <h2 class="text-2xl md:text-3xl font-light text-gray-300 mb-8">
+                            ${personalInfo.role}
+                        </h2>
+                        <p class="text-lg text-gray-400 max-w-3xl mx-auto mb-12">
+                            ${personalInfo.tagline}
+                        </p>
+                        
+                        <div class="flex justify-center space-x-4">
+                            <button 
+                                onclick="scrollToSection('projects')"
+                                class="px-8 py-3 bg-cyan-600 text-white rounded-lg font-semibold hover:bg-cyan-700 transition-colors flex items-center space-x-2 shadow-lg shadow-cyan-600/30"
+                            >
+                                <i data-lucide="bar-chart-2" class="w-5 h-5"></i>
+                                <span>View Dashboards</span>
+                            </button>
+                            <button 
+                                onclick="scrollToSection('contact')"
+                                class="px-8 py-3 border border-gray-600 text-gray-300 rounded-lg font-semibold hover:bg-gray-700 transition-colors flex items-center space-x-2"
+                            >
+                                <i data-lucide="mail" class="w-5 h-5"></i>
+                                <span>Get in Touch</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderAbout() {
+            const experienceHTML = experience.map((exp, index) => `
+                <div class="relative">
+                    <div class="absolute -left-5 top-1 w-3 h-3 bg-cyan-500 rounded-full border-2 border-gray-950"></div>
+                    <p class="text-sm font-semibold text-cyan-400">${exp.year}</p>
+                    <h4 class="text-lg font-bold text-white">${exp.role}</h4>
+                    <p class="text-gray-300 text-sm">${exp.company}</p>
+                    <p class="text-gray-500 text-xs">${exp.focus}</p>
+                </div>
+            `).join('');
+
+            return `
+                <section id="about" class="py-16 border-b border-gray-800">
+                    <div class="max-w-6xl mx-auto px-6">
+                        <h2 class="text-4xl font-extrabold text-white mb-10 flex items-center space-x-3">
+                            <i data-lucide="briefcase" class="text-cyan-400 w-8 h-8"></i>
+                            <span>About Me</span>
+                        </h2>
+                        <div class="grid md:grid-cols-3 gap-12">
+                            <div class="md:col-span-2 space-y-6">
+                                <p class="text-gray-200 leading-relaxed text-lg">
+                                    ${personalInfo.bio}
+                                </p>
+                                <p class="text-gray-400 leading-relaxed">
+                                    My primary goal is to empower stakeholders with the necessary information to make data-informed decisions, whether through robust ETL processes, predictive modeling, or compelling data narratives. I thrive on bringing clarity to complex data environments.
+                                </p>
+                                
+                                <div class="pt-4 space-y-4">
+                                    <div class="flex items-center space-x-3 text-gray-300">
+                                        <i data-lucide="mail" class="w-5 h-5 text-cyan-400"></i>
+                                        <span class="font-semibold">Email:</span> <a href="mailto:${personalInfo.email}" class="text-gray-300 hover:text-cyan-400">${personalInfo.email}</a>
+                                    </div>
+                                    <div class="flex items-center space-x-3 text-gray-300">
+                                        <i data-lucide="map-pin" class="w-5 h-5 text-cyan-400"></i>
+                                        <span class="font-semibold">Location:</span> <span>${personalInfo.location}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="md:col-span-1">
+                                <h3 class="text-2xl font-bold text-white mb-4">Experience Timeline</h3>
+                                <div class="space-y-4 border-l-2 border-gray-700 pl-4">
+                                    ${experienceHTML}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            `;
+        }
+
+        function getSkillIcon(group) {
+            switch (group) {
+                case "Data Management": return 'database';
+                case "Analysis & Tools": return 'bar-chart-2';
+                case "Visualization & BI": return 'monitor';
+                case "Cloud & Concepts": return 'clipboard-check';
+                default: return 'code';
+            }
+        }
+
+        function renderSkills() {
+            const skillGroupsHTML = coreSkills.map(skillGroup => `
+                <div class="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-xl hover:border-cyan-500/50 transition-colors">
+                    <h3 class="text-xl font-bold text-white mb-4 flex items-center space-x-2">
+                        <i data-lucide="${getSkillIcon(skillGroup.group)}" class="w-6 h-6 text-cyan-400"></i>
+                        <span>${skillGroup.group}</span>
+                    </h3>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        ${skillGroup.items.map(item => `
+                            <li class="flex items-center before:content-['•'] before:text-cyan-400 before:mr-2">
+                                ${item}
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+            `).join('');
+
+            return `
+                <section id="skills" class="py-16 border-b border-gray-800">
+                    <div class="max-w-6xl mx-auto px-6">
+                        <h2 class="text-4xl font-extrabold text-white mb-10 flex items-center space-x-3">
+                            <i data-lucide="clipboard-check" class="text-cyan-400 w-8 h-8"></i>
+                            <span>Technical Skills</span>
+                        </h2>
+                        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                            ${skillGroupsHTML}
+                        </div>
+                    </div>
+                </section>
+            `;
+        }
+
+        function renderProjects() {
+            const projectsHTML = projects.map(project => `
+                <div class="bg-gray-900 p-6 rounded-xl border border-gray-700 shadow-md hover:shadow-cyan-500/10 transition-shadow">
+                    <h3 class="text-xl font-bold text-white mb-2">${project.title}</h3>
+                    <p class="text-gray-400 mb-4 text-sm">${project.description}</p>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        ${project.tags.map(tag => `
+                            <span class="px-3 py-1 text-xs rounded-full bg-cyan-900/30 text-cyan-400 border border-cyan-800">
+                                ${tag}
+                            </span>
+                        `).join('')}
+                    </div>
+                    <a href="${project.link}" class="text-cyan-400 hover:text-cyan-300 flex items-center space-x-1 font-medium text-sm">
+                        <span>View Case Study/Code</span> <i data-lucide="send" class="w-4 h-4 transform rotate-45"></i>
+                    </a>
+                </div>
+            `).join('');
+
+            return `
+                <section id="projects" class="py-16 border-b border-gray-800">
+                    <div class="max-w-6xl mx-auto px-6">
+                        <h2 class="text-4xl font-extrabold text-white mb-10 flex items-center space-x-3">
+                            <i data-lucide="bar-chart-2" class="text-cyan-400 w-8 h-8"></i>
+                            <span>Featured Projects</span>
+                        </h2>
+                        <div class="grid md:grid-cols-3 gap-8">
+                            ${projectsHTML}
+                        </div>
+                        <p class="text-center text-gray-500 mt-12">
+                            * You can easily add more projects by editing the 'projects' array in the script block above!
+                        </p>
+                    </div>
+                </section>
+            `;
+        }
+
+        function renderContact() {
+            return `
+                <section id="contact" class="py-16 border-b border-gray-800">
+                    <div class="max-w-6xl mx-auto px-6">
+                        <h2 class="text-4xl font-extrabold text-white mb-10 flex items-center space-x-3">
+                            <i data-lucide="mail" class="text-cyan-400 w-8 h-8"></i>
+                            <span>Get in Touch</span>
+                        </h2>
+                        <div class="max-w-xl mx-auto bg-gray-900 p-8 rounded-xl border border-gray-700 shadow-2xl">
+                            <p class="text-gray-300 text-center mb-6">
+                                I'm actively seeking roles and consulting opportunities. Let's discuss your data needs.
+                            </p>
+                            <form id="contact-form" class="space-y-4">
+                                <input
+                                    type="text"
+                                    placeholder="Your Name"
+                                    required
+                                    class="w-full p-3 bg-gray-950 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-cyan-500 focus:border-cyan-500 transition-colors"
+                                />
+                                <input
+                                    type="email"
+                                    placeholder="Your Business Email"
+                                    required
+                                    class="w-full p-3 bg-gray-950 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-cyan-500 focus:border-cyan-500 transition-colors"
+                                />
+                                <textarea
+                                    placeholder="Tell me about the project or role..."
+                                    rows="5"
+                                    required
+                                    class="w-full p-3 bg-gray-950 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-cyan-500 focus:border-cyan-500 transition-colors resize-none"
+                                ></textarea>
+                                <button
+                                    type="submit"
+                                    id="contact-button"
+                                    class="w-full py-3 bg-cyan-600 text-white font-semibold rounded-lg hover:bg-cyan-700 transition-colors flex items-center justify-center space-x-2"
+                                >
+                                    <span id="button-text">Send Inquiry</span> <i data-lucide="send" class="w-5 h-5 transform rotate-45"></i>
+                                </button>
+                            </form>
+                        </div>
+                        <div class="flex justify-center space-x-4 mt-8">
+                            <a href="${personalInfo.socials.linkedin}" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-cyan-400 transition-colors">
+                                <i data-lucide="linkedin" class="w-6 h-6"></i>
+                            </a>
+                            <a href="${personalInfo.socials.github}" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-cyan-400 transition-colors">
+                                <i data-lucide="github" class="w-6 h-6"></i>
+                            </a>
+                        </div>
+                    </div>
+                </section>
+            `;
+        }
+
+        function renderFooter() {
+            return `
+                <footer class="py-6 bg-gray-950 text-center text-gray-500 text-sm border-t border-gray-800">
+                    <p>&copy; ${new Date().getFullYear()} ${personalInfo.name}. All Data Analytics Content.</p>
+                </footer>
+            `;
+        }
+
+        // --- APPLICATION INITIALIZATION ---
+
+        function initApp() {
+            // 1. Render Navigation Bar
+            renderNavbar();
+
+            // 2. Render Main Content Sections
+            const mainContent = `
+                <main>
+                    ${renderHero()}
+                    ${renderAbout()}
+                    ${renderSkills()}
+                    ${renderProjects()}
+                    ${renderContact()}
+                </main>
+                ${renderFooter()}
+            `;
+            document.getElementById('app-root').insertAdjacentHTML('beforeend', mainContent);
+
+            // 3. Initialize Lucide icons
+            lucide.createIcons();
+
+            // 4. Add Contact Form Handler
+            const contactForm = document.getElementById('contact-form');
+            const contactButton = document.getElementById('contact-button');
+            const buttonText = document.getElementById('button-text');
+
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                contactButton.disabled = true;
+                buttonText.textContent = 'Sending...';
+
+                // Simulate sending delay
+                setTimeout(() => {
+                    buttonText.textContent = 'Sent Successfully!';
+                    contactButton.classList.remove('bg-cyan-600', 'hover:bg-cyan-700');
+                    contactButton.classList.add('bg-green-600');
+                    
+                    // Reset form and button state after a few seconds (optional)
+                    setTimeout(() => {
+                        contactForm.reset();
+                        contactButton.disabled = false;
+                        buttonText.textContent = 'Send Inquiry';
+                        contactButton.classList.remove('bg-green-600');
+                        contactButton.classList.add('bg-cyan-600', 'hover:bg-cyan-700');
+                    }, 3000);
+
+                }, 1500);
+            });
+        }
+
+        // Run initialization when the window loads
+        window.onload = initApp;
+
+    </script>
+</body>
+</html>
