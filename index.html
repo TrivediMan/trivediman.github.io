@@ -401,7 +401,6 @@ ${skillGroupsHTML}
 }
 
 function renderProjects() {
-// UPDATED: Cards are now entirely clickable and open the AI Analysis Modal
 const projectsHTML = projects.map((project, index) => `
 <div onclick="openProjectModal(${index})" data-tilt data-tilt-max="5" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.2" class="cursor-pointer group bg-dark-card/90 backdrop-blur-md rounded-xl border border-dark-border overflow-hidden flex flex-col hover:border-brand-500/50 hover:shadow-[0_15px_40px_rgba(37,99,235,0.2)] transition-all duration-500 preserve-3d">
 <div class="p-8 flex-1 transform-z-30 pointer-events-none">
@@ -527,10 +526,10 @@ return `
 
 // --- GEMINI API INTEGRATION ---
 
-const GEMINI_API_KEY = 'YOUR_GEMINI_API_KEY_HERE'; // ⚠️ Replace this with your actual key!
+const GEMINI_API_KEY = 'AQ.Ab8RN6I0wAyAFT2-9BB2N8hwpp7MdfjmCbV6530XSCkfLUCEKQ'; // Add your key here!
 
 async function fetchGeminiResponse(prompt) {
-if (GEMINI_API_KEY === 'YOUR_GEMINI_API_KEY_HERE') {
+if (GEMINI_API_KEY === 'YOUR_GEMINI_API_KEY_HERE' || GEMINI_API_KEY === '') {
 return "⚠️ **API Key Missing!** Please add your Gemini API key to the `index.html` file to enable real AI responses.";
 }
 
@@ -544,13 +543,16 @@ contents: [{ parts: [{ text: prompt }] }]
 })
 });
 
-if (!response.ok) throw new Error('API request failed');
+if (!response.ok) {
+    const errData = await response.json();
+    throw new Error(errData.error?.message || 'API request failed');
+}
 
 const data = await response.json();
 return data.candidates[0].content.parts[0].text;
 } catch (error) {
 console.error("Error:", error);
-return "Sorry, I encountered a network error trying to reach the AI. Please try again later.";
+return `⚠️ **Error connecting to AI:** ${error.message}. Please check if your API key is correct and active.`;
 }
 }
 
