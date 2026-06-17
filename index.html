@@ -6,10 +6,10 @@
 <title>Trivedi Man | Data Analyst Portfolio</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
-<!-- Added Vanilla Tilt for 3D interactions -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
-<!-- Added Particles.js for multidimensional background -->
 <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <script>
 tailwind.config = {
@@ -37,11 +37,16 @@ border: '#1e293b',
 animation: {
 'float-slow': 'float 6s ease-in-out infinite',
 'float-fast': 'float 4s ease-in-out infinite',
+'pulse-glow': 'pulseGlow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
 },
 keyframes: {
 float: {
 '0%, 100%': { transform: 'translateY(0) rotate(0deg)' },
 '50%': { transform: 'translateY(-15px) rotate(1deg)' },
+},
+pulseGlow: {
+'0%, 100%': { opacity: 1, boxShadow: '0 0 15px rgba(59,130,246,0.5)' },
+'50%': { opacity: .5, boxShadow: '0 0 5px rgba(59,130,246,0.2)' },
 }
 }
 }
@@ -59,10 +64,15 @@ body { background-color: #020617; overflow-x: hidden; }
 
 /* Glow effect for multidimensional feel */
 .glow-text { text-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
+
+/* Markdown Styling overrides */
+.prose-chat p { margin-bottom: 0.5em; }
+.prose-chat strong { color: #60a5fa; }
+.prose-chat ul { list-style-type: disc; padding-left: 1.5em; margin-bottom: 0.5em; }
+.prose-chat h3 { color: #93c5fd; font-weight: bold; margin-top: 1em; margin-bottom: 0.5em; }
 </style>
 </head>
 <body class="bg-dark-bg text-slate-300 font-sans antialiased selection:bg-brand-500 selection:text-white">
-<!-- 5D Particle Background -->
 <div id="particles-js" class="fixed inset-0 pointer-events-none z-0 opacity-60"></div>
 <div id="app-root" class="relative z-10"></div>
 
@@ -132,7 +142,7 @@ link: "https://github.com/TrivediMan/ICC-Hardik-Panadya-Batting-Report/tree/main
 ];
 
 // --- UTILITIES ---
-const navItems = ['About', 'Skills', 'Projects', 'Contact'];
+const navItems = ['About', 'Skills', 'Projects', 'Sandbox', 'Contact'];
 
 function scrollToSection(id) {
 const element = document.getElementById(id);
@@ -244,11 +254,11 @@ ${personalInfo.tagline}
 
 <div class="flex flex-wrap gap-4 pt-4">
 <button
-onclick="scrollToSection('projects')"
+onclick="scrollToSection('sandbox')"
 class="px-8 py-3 bg-brand-600 text-white rounded-md font-semibold hover:bg-brand-500 transition-all shadow-[0_0_20px_rgba(37,99,235,0.4)] hover:shadow-[0_0_30px_rgba(37,99,235,0.6)] flex items-center gap-2 hover:-translate-y-1"
 >
-<i data-lucide="bar-chart-2" class="w-5 h-5"></i>
-<span>View Projects</span>
+<i data-lucide="cpu" class="w-5 h-5"></i>
+<span>Try AI Sandbox</span>
 </button>
 <a
 href="mailto:${personalInfo.email}"
@@ -317,7 +327,6 @@ return `
 <p class="mb-8">
 My primary goal is to empower stakeholders with the necessary information to make data-informed decisions. I treat data not just as numbers, but as a narrative that drives business efficiency.
 </p>
-
 <div class="grid grid-cols-2 gap-4 text-sm font-mono border-t border-dark-border pt-6">
 <div class="flex items-center gap-2 hover:text-brand-400 transition-colors">
 <i data-lucide="map-pin" class="w-4 h-4 text-brand-500"></i>
@@ -330,7 +339,6 @@ ${personalInfo.email}
 </div>
 </div>
 </div>
-
 <div class="md:w-1/3 bg-dark-card/80 backdrop-blur-md p-8 rounded-2xl border border-dark-border shadow-[0_10px_30px_rgba(0,0,0,0.4)]" data-tilt data-tilt-max="5" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.1">
 <h3 class="text-xl font-bold text-white mb-6">Career Timeline</h3>
 <div class="space-y-0">
@@ -413,19 +421,58 @@ ${projectsHTML}
 `;
 }
 
+// --- NEW FEATURE: AI DATA SANDBOX ---
+function renderSandbox() {
+return `
+<section id="sandbox" class="py-20 relative z-10 bg-slate-950/50 border-y border-dark-border/50">
+<div class="max-w-5xl mx-auto px-6 relative">
+<div class="absolute -top-10 -right-10 w-40 h-40 bg-brand-500/10 blur-3xl rounded-full"></div>
+<h2 class="text-3xl font-bold text-white mb-8 flex items-center gap-3">
+<span class="text-brand-500">04.</span> AI Project Sandbox
+</h2>
+<div class="bg-dark-card/90 backdrop-blur-xl border border-brand-500/30 rounded-2xl p-8 shadow-[0_0_40px_rgba(37,99,235,0.15)]">
+<div class="flex items-start gap-4 mb-6">
+<div class="p-3 bg-brand-900/50 rounded-lg text-brand-400">
+<i data-lucide="sparkles" class="w-6 h-6"></i>
+</div>
+<div>
+<h3 class="text-xl font-bold text-white">Interactive Data Analysis</h3>
+<p class="text-slate-400 text-sm mt-1">Want to see my methodology in action? Paste a small snippet of dummy data (CSV format) or describe a business problem below. My Gemini AI integration will generate instant, mock data insights.</p>
+</div>
+</div>
+
+<textarea id="sandbox-input" rows="5" class="w-full bg-slate-900/80 text-slate-200 border border-slate-700 rounded-xl p-4 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none mb-4 font-mono text-sm transition-all" placeholder="Paste some dummy data here...&#10;Example:&#10;Month, Revenue, Ad Spend&#10;Jan, $15000, $2000&#10;Feb, $18000, $2500..."></textarea>
+
+<button onclick="runSandboxAnalysis()" id="sandbox-btn" class="px-6 py-3 bg-brand-600 hover:bg-brand-500 text-white font-semibold rounded-lg transition-all shadow-[0_0_15px_rgba(37,99,235,0.4)] flex items-center gap-2 group">
+<i data-lucide="cpu" class="w-5 h-5 group-hover:rotate-180 transition-transform duration-500"></i> 
+<span>Generate Insights</span>
+</button>
+
+<div id="sandbox-output" class="mt-8 hidden animate-fade-in">
+<div class="flex items-center gap-2 mb-4 border-b border-slate-800 pb-3">
+<i data-lucide="bar-chart" class="w-5 h-5 text-green-400"></i>
+<h4 class="text-lg font-bold text-white">AI Analysis Results</h4>
+</div>
+<div id="sandbox-results" class="prose-chat text-slate-300 text-sm bg-slate-900/50 p-6 rounded-xl border border-slate-800 shadow-inner"></div>
+</div>
+</div>
+</div>
+</section>
+`;
+}
+
 function renderContact() {
 return `
-<section id="contact" class="py-24 relative z-10 border-t border-dark-border/50">
+<section id="contact" class="py-24 relative z-10">
 <div class="absolute inset-0 bg-gradient-to-b from-transparent to-brand-900/10 pointer-events-none"></div>
 <div class="max-w-4xl mx-auto px-6 text-center relative" data-tilt data-tilt-max="2" data-tilt-speed="400">
-<span class="text-brand-500 font-mono text-sm mb-4 block">04. What's Next?</span>
+<span class="text-brand-500 font-mono text-sm mb-4 block">05. What's Next?</span>
 <h2 class="text-4xl md:text-5xl font-bold text-white mb-6">Get In Touch</h2>
 <p class="text-lg text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">
 I am currently looking for new opportunities in Data Analytics and Business Intelligence.
 Whether you have a question about my portfolio or want to discuss a potential collaboration,
 my inbox is always open.
 </p>
-
 <div class="flex justify-center">
 <a
 href="mailto:${personalInfo.email}"
@@ -438,11 +485,9 @@ Say Hello via Email
 <div class="absolute inset-0 h-full w-full scale-0 rounded-lg transition-all duration-300 group-hover:scale-100 group-hover:bg-brand-500"></div>
 </a>
 </div>
-
 <p class="mt-8 text-slate-500 font-mono text-sm">
 or email directly: <span class="text-slate-300 select-all">${personalInfo.email}</span>
 </p>
-
 <div class="flex justify-center space-x-8 mt-12">
 <a href="${personalInfo.socials.linkedin}" target="_blank" class="text-slate-400 hover:text-brand-400 transition-all transform hover:scale-125 hover:-translate-y-2 drop-shadow-[0_0_10px_rgba(59,130,246,0)] hover:drop-shadow-[0_0_10px_rgba(59,130,246,0.8)]">
 <i data-lucide="linkedin" class="w-8 h-8"></i>
@@ -465,55 +510,202 @@ return `
 `;
 }
 
+// --- GEMINI API INTEGRATION (USED FOR BOTH CHATBOT & SANDBOX) ---
+
+const GEMINI_API_KEY = 'YOUR_GEMINI_API_KEY_HERE'; // ⚠️ Replace this with your actual key!
+
+async function fetchGeminiResponse(prompt) {
+if (GEMINI_API_KEY === 'YOUR_GEMINI_API_KEY_HERE') {
+return "⚠️ **API Key Missing!** Please add your Gemini API key to the `index.html` file (around line 465) to enable real AI responses.";
+}
+
+const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+try {
+const response = await fetch(url, {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({
+contents: [{ parts: [{ text: prompt }] }]
+})
+});
+
+if (!response.ok) throw new Error('API request failed');
+
+const data = await response.json();
+return data.candidates[0].content.parts[0].text;
+} catch (error) {
+console.error("Error:", error);
+return "Sorry, I encountered a network error trying to reach the AI. Please try again later.";
+}
+}
+
+
+// --- AI SANDBOX LOGIC ---
+window.runSandboxAnalysis = async function() {
+const inputArea = document.getElementById('sandbox-input');
+const outputDiv = document.getElementById('sandbox-output');
+const resultsDiv = document.getElementById('sandbox-results');
+const btn = document.getElementById('sandbox-btn');
+
+const data = inputArea.value.trim();
+
+if (!data) {
+alert("Please paste some data or describe a problem first!");
+inputArea.focus();
+return;
+}
+
+// UI Loading state
+outputDiv.classList.remove('hidden');
+btn.disabled = true;
+btn.innerHTML = '<i data-lucide="loader" class="w-5 h-5 animate-spin"></i> Processing...';
+resultsDiv.innerHTML = '<div class="flex items-center gap-3 text-brand-400"><div class="w-2 h-2 bg-brand-400 rounded-full animate-bounce"></div><div class="w-2 h-2 bg-brand-400 rounded-full animate-bounce" style="animation-delay: 0.1s"></div><div class="w-2 h-2 bg-brand-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></div> Analyzing Data Context...</div>';
+lucide.createIcons();
+
+// Custom Prompt for Sandbox Analysis
+const systemPrompt = `You are a Senior Data Analyst. A user on my portfolio has provided the following data snippet or business problem. 
+Analyze it quickly and provide exactly 3 concise, highly professional, actionable business insights or next steps. 
+Format your response in Markdown with clear headings and bullet points. 
+Do not hallucinate fake numbers, just point out trends, correlations to look for, or formulas you would apply to this type of data.
+
+User Data/Problem:
+"""
+${data}
+"""
+`;
+
+const response = await fetchGeminiResponse(systemPrompt);
+
+// Render Results
+resultsDiv.innerHTML = marked.parse(response);
+btn.disabled = false;
+btn.innerHTML = '<i data-lucide="cpu" class="w-5 h-5"></i> <span>Analysis Complete (Run Again)</span>';
+lucide.createIcons();
+};
+
+
+// --- CHATBOT UI & LOGIC ---
+function renderChatbot() {
+const chatHTML = `
+<div id="chatbot-container" class="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+<div id="chat-window" class="hidden w-80 sm:w-96 h-[500px] bg-dark-card border border-brand-500/50 rounded-2xl shadow-[0_0_30px_rgba(37,99,235,0.3)] flex-col overflow-hidden mb-4 transition-all duration-300 origin-bottom-right">
+<div class="bg-brand-900 border-b border-brand-500/30 p-4 flex justify-between items-center text-white">
+<div class="flex items-center gap-2">
+<i data-lucide="sparkles" class="w-5 h-5 text-brand-400"></i>
+<div>
+    <span class="font-bold block text-sm">Gemini AI</span>
+    <span class="text-xs text-brand-400">Trivedi's Assistant</span>
+</div>
+</div>
+<button onclick="toggleChat()" class="hover:text-brand-200 transition-colors">
+<i data-lucide="x" class="w-5 h-5"></i>
+</button>
+</div>
+
+<div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-4 bg-dark-bg/90 scroll-smooth">
+<div class="bg-slate-800 text-slate-200 p-3 rounded-lg rounded-tl-none max-w-[85%] text-sm border border-slate-700 shadow-md">
+Hi! I'm the AI assistant for Trivedi Man's portfolio. I can answer questions about his skills, projects, and background. What would you like to know?
+</div>
+</div>
+
+<div class="p-3 bg-dark-card border-t border-dark-border flex gap-2">
+<input type="text" id="chat-input" placeholder="Ask about my projects..." class="flex-1 bg-slate-900 text-white text-sm rounded-lg px-3 py-2 border border-slate-700 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-all" onkeypress="handleKeyPress(event)">
+<button onclick="sendMessage()" class="bg-brand-600 hover:bg-brand-500 text-white p-2 rounded-lg transition-colors flex items-center justify-center">
+<i data-lucide="send" class="w-4 h-4"></i>
+</button>
+</div>
+</div>
+
+<button onclick="toggleChat()" class="w-14 h-14 bg-brand-600 hover:bg-brand-500 text-white rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(37,99,235,0.6)] hover:shadow-[0_0_30px_rgba(37,99,235,0.8)] transition-all hover:-translate-y-1 group animate-pulse-glow">
+<i data-lucide="bot" class="w-7 h-7 group-hover:scale-110 transition-transform"></i>
+</button>
+</div>
+`;
+document.body.insertAdjacentHTML('beforeend', chatHTML);
+}
+
+window.toggleChat = function() {
+const chatWindow = document.getElementById('chat-window');
+chatWindow.classList.toggle('hidden');
+chatWindow.classList.toggle('flex');
+if (!chatWindow.classList.contains('hidden')) {
+document.getElementById('chat-input').focus();
+}
+};
+
+window.handleKeyPress = function(event) {
+if (event.key === 'Enter') sendMessage();
+};
+
+window.sendMessage = async function() {
+const input = document.getElementById('chat-input');
+const message = input.value.trim();
+if (!message) return;
+
+input.value = '';
+appendMessage(message, 'user');
+const loadingId = appendLoading();
+
+const systemPrompt = `You are an AI assistant built into the portfolio website of Trivedi Man. 
+You answer questions politely and professionally as a representative.
+Here is the context about Trivedi:
+Role: Data Analyst & BI Specialist.
+Location: Surat, Gujarat, India.
+Skills: SQL, Data Warehousing, ETL, Python, Pandas, Numpy, Power BI, Tableau, Excel.
+Projects: Apple Sales Dashboard, Ecommerce Logistics Analysis, Smart Library System, Edtech Analysis, Hardik Pandya Batting Report.
+User Question: ${message}`;
+
+const response = await fetchGeminiResponse(systemPrompt);
+
+document.getElementById(loadingId).remove();
+appendMessage(response, 'ai');
+};
+
+function appendMessage(text, sender) {
+const messagesContainer = document.getElementById('chat-messages');
+const div = document.createElement('div');
+
+if (sender === 'user') {
+div.className = 'bg-brand-600 text-white p-3 rounded-lg rounded-tr-none max-w-[85%] text-sm ml-auto shadow-md';
+div.innerText = text;
+} else {
+div.className = 'bg-slate-800 text-slate-200 p-3 rounded-lg rounded-tl-none max-w-[85%] text-sm border border-slate-700 shadow-md prose-chat';
+div.innerHTML = marked.parse(text); 
+}
+
+messagesContainer.appendChild(div);
+messagesContainer.scrollTop = messagesContainer.scrollHeight;
+}
+
+function appendLoading() {
+const messagesContainer = document.getElementById('chat-messages');
+const div = document.createElement('div');
+const id = 'loading-' + Date.now();
+div.id = id;
+div.className = 'bg-slate-800 text-slate-400 p-3 rounded-lg rounded-tl-none max-w-[85%] text-sm border border-slate-700 shadow-md flex gap-1 items-center w-16 h-10';
+div.innerHTML = `<span class="w-2 h-2 bg-slate-500 rounded-full animate-bounce"></span><span class="w-2 h-2 bg-slate-500 rounded-full animate-bounce" style="animation-delay: 0.1s"></span><span class="w-2 h-2 bg-slate-500 rounded-full animate-bounce" style="animation-delay: 0.2s"></span>`;
+messagesContainer.appendChild(div);
+messagesContainer.scrollTop = messagesContainer.scrollHeight;
+return id;
+}
+
+
 // --- INITIALIZE PARTICLES (5D EFFECT) ---
 function initParticles() {
 particlesJS('particles-js', {
 "particles": {
-"number": {
-"value": 60,
-"density": { "enable": true, "value_area": 800 }
-},
+"number": { "value": 60, "density": { "enable": true, "value_area": 800 } },
 "color": { "value": "#3b82f6" },
 "shape": { "type": "circle" },
-"opacity": {
-"value": 0.5,
-"random": true,
-"anim": { "enable": true, "speed": 1, "opacity_min": 0.1, "sync": false }
-},
-"size": {
-"value": 3,
-"random": true,
-"anim": { "enable": true, "speed": 2, "size_min": 0.1, "sync": false }
-},
-"line_linked": {
-"enable": true,
-"distance": 150,
-"color": "#1e3a8a",
-"opacity": 0.4,
-"width": 1
-},
-"move": {
-"enable": true,
-"speed": 1.5,
-"direction": "none",
-"random": true,
-"straight": false,
-"out_mode": "out",
-"bounce": false,
-"attract": { "enable": true, "rotateX": 600, "rotateY": 1200 }
-}
+"opacity": { "value": 0.5, "random": true, "anim": { "enable": true, "speed": 1, "opacity_min": 0.1, "sync": false } },
+"size": { "value": 3, "random": true, "anim": { "enable": true, "speed": 2, "size_min": 0.1, "sync": false } },
+"line_linked": { "enable": true, "distance": 150, "color": "#1e3a8a", "opacity": 0.4, "width": 1 },
+"move": { "enable": true, "speed": 1.5, "direction": "none", "random": true, "straight": false, "out_mode": "out", "bounce": false, "attract": { "enable": true, "rotateX": 600, "rotateY": 1200 } }
 },
 "interactivity": {
 "detect_on": "canvas",
-"events": {
-"onhover": { "enable": true, "mode": "grab" },
-"onclick": { "enable": true, "mode": "push" },
-"resize": true
-},
-"modes": {
-"grab": { "distance": 200, "line_linked": { "opacity": 0.8 } },
-"push": { "particles_nb": 4 }
-}
+"events": { "onhover": { "enable": true, "mode": "grab" }, "onclick": { "enable": true, "mode": "push" }, "resize": true },
+"modes": { "grab": { "distance": 200, "line_linked": { "opacity": 0.8 } }, "push": { "particles_nb": 4 } }
 },
 "retina_detect": true
 });
@@ -528,15 +720,16 @@ ${renderHero()}
 ${renderAbout()}
 ${renderSkills()}
 ${renderProjects()}
+${renderSandbox()}
 ${renderContact()}
 </main>
 ${renderFooter()}
 `;
 document.getElementById('app-root').insertAdjacentHTML('beforeend', mainContent);
-lucide.createIcons();
 
-// Initialize the 5D Data Particle Background
 setTimeout(initParticles, 100);
+renderChatbot();
+lucide.createIcons();
 }
 
 window.onload = initApp;
