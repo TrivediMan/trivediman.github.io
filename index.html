@@ -81,6 +81,9 @@ h1 span{background:linear-gradient(100deg,var(--a),var(--b) 55%,var(--c));-webki
 .tags span{font:400 12px 'IBM Plex Mono',monospace;color:var(--a);background:rgba(56,225,198,.08);padding:3px 9px;border-radius:6px}
 .go{font-weight:700;color:var(--b);font-size:14px}
 .go:hover{color:var(--a)}
+.lk{display:flex;gap:18px;flex-wrap:wrap}
+.go.live{color:var(--a)}
+.go.live:before{content:'';display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--a);margin-right:8px;box-shadow:0 0 0 3px rgba(56,225,198,.2)}
 /* contact */
 .contact{text-align:center}
 .contact .lead{margin-inline:auto}
@@ -209,7 +212,7 @@ const skills=[
  ["Delivery",["Streamlit apps","Matplotlib / Seaborn","Advanced Excel","Data storytelling"]]
 ];
 const projects=[
- {t:"Robust: House Price Predictor",d:"A machine learning web app that estimates house prices in ₹ from property details. A trained scikit-learn regression pipeline is served through a Streamlit interface.",g:["ML"],tags:["scikit-learn","pandas","Streamlit"],l:"https://github.com/TrivediMan/Robust"},
+ {t:"Robust: House Price Predictor",d:"A machine learning web app that estimates house prices in ₹ from property details. A trained scikit-learn regression pipeline is served through a Streamlit interface.",g:["ML"],tags:["scikit-learn","pandas","Streamlit"],l:"https://github.com/TrivediMan/Robust",demo:"https://robust-5fd7qcgpjn6hxvnha76eg4.streamlit.app/"},
  {t:"Spread Locator: Statistical Distribution Analysis",d:"Applies probability distributions and spread analysis to a dataset, covering distribution types, Q-Q plots, statistical transformations and probability functions.",g:["ML"],tags:["Jupyter Notebook","Statistics"],l:"https://github.com/TrivediMan/PR-3-Spread-Locator-A-Statistical-Distribution-Analysis-Model/tree/main"},
  {t:"Ecommerce Logistics Analysis",d:"Exploratory data analysis on very large delivery datasets with Python (NumPy, Pandas, Matplotlib, Seaborn) to find ways to optimize routes.",g:["ML","Analytics"],tags:["Python","Pandas","EDA","Seaborn"],l:"https://github.com/TrivediMan/Ecommerce-logistics-Delivery-Gigantic-Data-Python"},
  {t:"EdTech Students Analysis",d:"Institute analysis covering courses, attendance, placement and student performance, from MySQL through to Power BI.",g:["Analytics","SQL"],tags:["MySQL","Python","Power BI"],l:"https://github.com/TrivediMan/EdTech-Student-Learning-Placement-Analysis-Power-Bi"},
@@ -223,7 +226,7 @@ $('#skillGrid').innerHTML=skills.map(([h,i])=>`<div class="card" data-tilt data-
 const cats=["All","ML","Analytics","SQL"];
 $('#chips').innerHTML=cats.map((c,i)=>`<button class="chip${i?'':' on'}" data-c="${c}">${c}</button>`).join('');
 function draw(c){
- $('#projGrid').innerHTML=projects.filter(p=>c==="All"||p.g.includes(c)).map(p=>`<a class="card proj" href="${p.l}" target="_blank" rel="noopener" data-tilt data-tilt-max="8" data-tilt-glare data-tilt-max-glare=".15"><h3>${p.t}</h3><p>${p.d}</p><div class="tags">${p.tags.map(t=>`<span>${t}</span>`).join('')}</div><span class="go">View on GitHub</span></a>`).join('');
+ $('#projGrid').innerHTML=projects.filter(p=>c==="All"||p.g.includes(c)).map(p=>`<div class="card proj" data-tilt data-tilt-max="8" data-tilt-glare data-tilt-max-glare=".15"><h3>${p.t}</h3><p>${p.d}</p><div class="tags">${p.tags.map(t=>`<span>${t}</span>`).join('')}</div><div class="lk"><a class="go" href="${p.l}" target="_blank" rel="noopener">View on GitHub</a>${p.demo?`<a class="go live" href="${p.demo}" target="_blank" rel="noopener">Live demo</a>`:''}</div></div>`).join('');
  if(window.VanillaTilt)VanillaTilt.init(document.querySelectorAll('#projGrid [data-tilt]'));
 }
 $('#chips').onclick=e=>{const b=e.target.closest('.chip');if(!b)return;document.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===b));draw(b.dataset.c)};
@@ -274,7 +277,7 @@ addEventListener('scroll',()=>{let cur='';secs.forEach(s=>{if(scrollY>=s.offsetT
  const toks=q=>q.toLowerCase().replace(/[^a-z0-9 ]/g,' ').split(/\s+/).filter(w=>w&&!stop.includes(w)).map(stem);
  const link=(p)=>`<a href="${p.l}" target="_blank" rel="noopener">Open on GitHub</a>`;
  const show=(f)=>`<a href="#projects" data-f="${f}">Show in Projects section</a>`;
- const card=p=>`<b>${p.t}</b><br>${p.d}<br><span class="tg">${p.tags.join(', ')}</span><br>${link(p)} · ${show(p.g[0])}`;
+ const card=p=>`<b>${p.t}</b><br>${p.d}<br><span class="tg">${p.tags.join(', ')}</span><br>${link(p)}${p.demo?` · <a href="${p.demo}" target="_blank" rel="noopener">Live demo</a>`:''} · ${show(p.g[0])}`;
  const list=a=>'<ul>'+a.map(p=>`<li><a href="#" data-q="${p.t}">${p.t}</a></li>`).join('')+'</ul>';
  const byG=g=>projects.filter(p=>p.g.includes(g));
  function score(q,i){const p=projects[i],bag=(p.t+' '+p.tags.join(' ')).toLowerCase(),desc=p.d.toLowerCase();let s=0;toks(q).forEach(w=>{if(key[i].some(k=>stem(k)===w))s+=5;else if(bag.includes(w))s+=2;else if(w.length>3&&desc.includes(w))s+=1});return s}
